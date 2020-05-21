@@ -32,3 +32,12 @@ header {
   @extend .header;
   border-bottom: none;
 }
+
+@media only screen and (max-width: 767px) {
+  .page-header NAV.responsive-nav ul.nav-main li {
+    float: none;
+  }
+  .nav-item:nth-child(2) {
+    text-indent: 0!important;
+  }
+}
