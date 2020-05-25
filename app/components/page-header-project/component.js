@@ -48,6 +48,7 @@ export default Component.extend(ThrottledResize, {
   boundClickMenu:      null,
   boundClickItem:      null,
   boundEnterCluster:   null,
+  boundTouchCluster:   null,
   dropdownApi:         null,
 
   project:             alias('scope.pendingProject'),
@@ -62,6 +63,7 @@ export default Component.extend(ThrottledResize, {
       boundClickMenu:      this.clickMenu.bind(this),
       boundClickItem:      this.clickItem.bind(this),
       boundEnterCluster:   this.enterCluster.bind(this),
+      boundTouchCluster:   this.touchCluster.bind(this),
       boundEnterScrollers: this.enterScrollers.bind(this),
       boundLeaveScrollers: this.leaveScrollers.bind(this),
     });
@@ -88,6 +90,7 @@ export default Component.extend(ThrottledResize, {
 
           clusters.on('focus', 'LI', this.boundEnterCluster);
           clusters.on('mouseenter', 'LI', this.boundEnterCluster);
+          clusters.on('touchend', 'LI', this.boundTouchCluster);
 
           $('.clusters, .projects').on('mouseenter', this.boundEnterScrollers);
           $('.clusters, .projects').on('mouseleave', this.boundLeaveScrollers);
@@ -425,6 +428,24 @@ export default Component.extend(ThrottledResize, {
 
       this.maybeHover(entry);
     }
+  },
+
+  touchCluster(e) {
+    const $li = $(e.target).closest('LI');
+    const id = $li.data('cluster-id');
+    const entry = get(this, 'byCluster').findBy('clusterId', id);
+    const a = $('A', $li)[0];
+
+
+    next(() => {
+      if (!a) {
+        return;
+      }
+      if (!entry.active) {
+        this.send('onClose');
+        a.click();
+      }
+    });
   },
 
   enterScrollers() {
